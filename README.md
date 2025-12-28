@@ -12,7 +12,7 @@ Why Datify?
 Requirements
 ------------
 - PHP 8.1+
-_- Laravel 10 or 11 (illuminate/support, illuminate/database)
+- Laravel 8-12 (illuminate/support, illuminate/database)
 
 Installation
 ------------
