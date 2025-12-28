@@ -5,6 +5,7 @@ namespace Datify\Concerns;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
 use Datify\Support\DatifyFormatter;
+use Illuminate\Support\Str;
 
 trait HasDatifyTimestamps
 {
@@ -32,6 +33,21 @@ trait HasDatifyTimestamps
         }
 
         return parent::getAttribute($key);
+    }
+
+    public function __call($method, $parameters)
+    {
+        if (preg_match('/^get(.+)Attribute$/', $method, $matches)) {
+            $attribute = Str::snake($matches[1]);
+
+            if ($parsed = $this->parseDatifyAttribute($attribute)) {
+                [$column, $formatKey] = $parsed;
+
+                return $this->formatExtra($column, $formatKey);
+            }
+        }
+
+        return parent::__call($method, $parameters);
     }
 
     protected function datifyAttributeNames(): array
