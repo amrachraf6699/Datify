@@ -136,18 +136,25 @@ trait HasDatifyTimestamps
 
     protected function parseDatifyAttribute(string $attribute): ?array
     {
+        $normalized = $this->normalizeDatifyAttribute($attribute);
         $columns = ['created_at', 'updated_at'];
 
         foreach ($columns as $column) {
             foreach ($this->datifyFormatKeys() as $formatKey) {
                 $name = $this->datifyAttributeName($column, $formatKey);
 
-                if ($attribute === $name && config("datify.{$formatKey}", false)) {
+                if (($attribute === $name || $normalized === $name) && config("datify.{$formatKey}", false)) {
                     return [$column, $formatKey];
                 }
             }
         }
 
         return null;
+    }
+
+    protected function normalizeDatifyAttribute(string $attribute): string
+    {
+        // Insert underscores before numeric groups to match format suffixes like iso_8601.
+        return preg_replace('/(?<=\\D)(\\d+)/', '_$1', $attribute);
     }
 }
